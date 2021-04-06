@@ -9,16 +9,17 @@ import (
 	"github.com/pastelnetwork/go-commons/errors"
 	"github.com/pastelnetwork/go-commons/log"
 	"github.com/pastelnetwork/go-commons/log/hooks"
-	"github.com/pastelnetwork/go-commons/sys"
 	"github.com/pastelnetwork/go-commons/version"
 	"github.com/pastelnetwork/walletnode/config"
+	"github.com/pastelnetwork/walletnode/internal/common"
+	"github.com/pastelnetwork/walletnode/internal/restserver"
+	"github.com/pastelnetwork/walletnode/internal/ticket"
 	"github.com/pastelnetwork/walletnode/pastel"
-	"github.com/pastelnetwork/walletnode/rest"
 )
 
 const (
 	appName  = "walletnode"
-	appUsage = "WalletNode" // TODO: Write a clear description.
+	appUsage = "Pastel Wallet Node"
 
 	defaultConfigFile = ""
 )
@@ -39,7 +40,7 @@ func NewApp() *cli.App {
 		cli.NewFlag("log-file", &config.LogFile).SetUsage("The log `file` to write to."),
 		cli.NewFlag("quiet", &config.Quiet).SetUsage("Disallows log output to stdout.").SetAliases("q"),
 		// Rest
-		cli.NewFlag("swagger", &config.Rest.Swagger).SetUsage("Enable Swagger UI."),
+		//cli.NewFlag("swagger", &config.Rest.Swagger).SetUsage("Enable Swagger UI."),
 	)
 
 	app.SetActionFunc(func(args []string) error {
@@ -76,18 +77,36 @@ func run(config *config.Config) error {
 
 	log.Debugf("[app] config: %s", config)
 
-	ctx := context.Background()
-	ctx, cancel := context.WithCancel(ctx)
-	defer cancel()
+	// ctx := context.Background()
+	// ctx, cancel := context.WithCancel(ctx)
+	// defer cancel()
 
-	sys.RegisterInterruptHandler(cancel, func() {
-		log.Info("[app] Interrupt signal received. Gracefully shutting down...")
-	})
+	// sys.RegisterInterruptHandler(cancel, func() {
+	// 	log.Info("[app] Interrupt signal received. Gracefully shutting down...")
+	// })
 
 	if err := pastel.Init(config.Pastel); err != nil {
 		return err
 	}
 
-	err := rest.New(config.Rest).Run(ctx)
-	return err
+	internalApp := common.NewApplication(appUsage)
+	restServer := restserver.New(pastel.Client, config.REST)
+
+	ticketProc := ticket.NewTicketProc(pastel.Client)
+	restServer.AddGetHandlers(map[string]interface{}{
+		"/ws": ticketProc.RegisterArtTicket,
+	})
+
+	//p2pServer := fileserver.P2PServer{}
+
+	internalApp.Run([]func(ctx context.Context, a *common.Application) func() error{
+		// Start REST Server
+		restServer.Start,
+		// Start p2p Listener
+		//p2pServer.Start,
+	})
+
+	// err := rest.New(config.Rest).Run(ctx)
+	// return err
+	return nil
 }
