@@ -13,7 +13,7 @@ type Config struct {
 	Main `mapstructure:",squash"`
 
 	Pastel *pastel.Config `mapstructure:"pastel" json:"pastel,omitempty"`
-	Nats   *nats.Config   `mapstructure:"nats" json:"nats,omitempty"`
+	Nats   *nats.Config   `mapstructure:"chat" json:"chat,omitempty"`
 	Rest   *rest.Config   `mapstructure:"rest" json:"rest,omitempty"`
 }
 
