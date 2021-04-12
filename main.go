@@ -10,7 +10,7 @@ import (
 )
 
 const (
-	debugModeEnvName = "WALLETNODE_DEBUG"
+	debugModeEnvName = "WALLETNODE_DEBUG_TEST"
 )
 
 var (
