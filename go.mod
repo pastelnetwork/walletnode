@@ -3,6 +3,7 @@ module github.com/pastelnetwork/walletnode
 go 1.16
 
 require (
+	github.com/dgraph-io/badger/v3 v3.2011.1 // indirect
 	github.com/dimfeld/httptreemux/v5 v5.3.0 // indirect
 	github.com/pastelnetwork/go-commons v0.0.1
 	github.com/pastelnetwork/go-pastel v0.0.1

@@ -11,7 +11,10 @@ import (
 	"github.com/pastelnetwork/go-commons/log/hooks"
 	"github.com/pastelnetwork/go-commons/sys"
 	"github.com/pastelnetwork/go-commons/version"
+	"github.com/pastelnetwork/walletnode/chat"
 	"github.com/pastelnetwork/walletnode/config"
+	"github.com/pastelnetwork/walletnode/dao/badger"
+	"github.com/pastelnetwork/walletnode/nats"
 	"github.com/pastelnetwork/walletnode/pastel"
 	"github.com/pastelnetwork/walletnode/rest"
 )
@@ -87,6 +90,18 @@ func run(config *config.Config) error {
 	if err := pastel.Init(config.Pastel); err != nil {
 		return err
 	}
+
+	db := badger.New(config.DBPath)
+	if err := db.Init(); err != nil {
+		return err
+	}
+
+	client := nats.NewClient(config.Nats)
+	// if err := client.Connect(); err != nil {
+	// 	return err
+	// }
+
+	chat := chat.New(client, db)
 
 	err := rest.New(config.Rest).Run(ctx)
 	return err
