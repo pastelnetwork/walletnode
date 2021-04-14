@@ -13,6 +13,7 @@ require (
 	github.com/pastelnetwork/go-pastel v0.0.1
 	github.com/rs/cors v1.7.0
 	github.com/sergi/go-diff v1.2.0 // indirect
+	github.com/stretchr/testify v1.7.0 // indirect
 	go.opencensus.io v0.23.0 // indirect
 	goa.design/goa/v3 v3.3.1
 	golang.org/dl v0.0.0-20210401214017-5e9de8bfb3b7 // indirect

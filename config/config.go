@@ -6,15 +6,17 @@ import (
 	"github.com/pastelnetwork/walletnode/nats"
 	"github.com/pastelnetwork/walletnode/pastel"
 	"github.com/pastelnetwork/walletnode/rest"
+	"github.com/pastelnetwork/walletnode/storage"
 )
 
 // Config contains configuration of all components of the WalletNode.
 type Config struct {
 	Main `mapstructure:",squash"`
 
-	Pastel *pastel.Config `mapstructure:"pastel" json:"pastel,omitempty"`
-	Nats   *nats.Config   `mapstructure:"chat" json:"chat,omitempty"`
-	Rest   *rest.Config   `mapstructure:"rest" json:"rest,omitempty"`
+	Store  *storage.Config `mapstructure:"storage" json:"storage,omitempty"`
+	Pastel *pastel.Config  `mapstructure:"pastel" json:"pastel,omitempty"`
+	Nats   *nats.Config    `mapstructure:"nats" json:"nats,omitempty"`
+	Rest   *rest.Config    `mapstructure:"rest" json:"rest,omitempty"`
 }
 
 func (config *Config) String() string {
