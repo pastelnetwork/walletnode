@@ -116,7 +116,6 @@ func (c *Client) Register() goa.Endpoint {
 }
 
 // RegisterTaskState returns an endpoint that makes HTTP requests to the
-// artworks service registerTaskState server.
 func (c *Client) RegisterTaskState() goa.Endpoint {
 	var (
 		decodeResponse = DecodeRegisterTaskStateResponse(c.decoder, c.RestoreResponseBody)
