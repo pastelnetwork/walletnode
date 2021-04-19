@@ -1,12 +1,13 @@
-package config
+package configs
 
 import (
 	"encoding/json"
 
 	"github.com/pastelnetwork/walletnode/api"
+
+	"github.com/pastelnetwork/walletnode/clients/nats"
+	"github.com/pastelnetwork/walletnode/clients/pastel"
 	"github.com/pastelnetwork/walletnode/dao"
-	"github.com/pastelnetwork/walletnode/nats"
-	"github.com/pastelnetwork/walletnode/pastel"
 )
 
 // Config contains configuration of all components of the WalletNode.
@@ -30,7 +31,8 @@ func (config *Config) String() string {
 // New returns a new Config instance
 func New() *Config {
 	return &Config{
-		Main:   *NewMain(),
+		Main: *NewMain(),
+
 		Pastel: pastel.NewConfig(),
 		Nats:   nats.NewConfig(),
 		Rest:   api.NewConfig(),
