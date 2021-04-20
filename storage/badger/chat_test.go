@@ -28,8 +28,8 @@ func TestMain(m *testing.M) {
 	}
 	fmt.Println("Created temporary directory", tmpDir)
 	cfg := storage.NewConfig()
-	chatDB = NewChatDB(cfg)
 	cfg.ChatDBDir = tmpDir
+	chatDB = NewChatDB(cfg)
 	if chatDB == nil {
 		tearDown(fmt.Errorf("can not start chatdb"))
 	}
