@@ -18,5 +18,6 @@ require (
 	goa.design/plugins/v3 v3.3.1
 	golang.org/dl v0.0.0-20210401214017-5e9de8bfb3b7 // indirect
 	golang.org/x/net v0.0.0-20210415231046-e915ea6b2b7d // indirect
+	golang.org/x/sync v0.0.0-20201020160332-67f06af15bc9 // indirect
 	golang.org/x/sys v0.0.0-20210403161142-5e06dd20ab57 // indirect
 )
