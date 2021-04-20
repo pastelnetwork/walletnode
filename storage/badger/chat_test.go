@@ -173,7 +173,6 @@ func TestChatDBDelete(t *testing.T) {
 			if err := chatDB.Delete(string(tt.args.key)); (err != nil) != tt.wantErr {
 				t.Errorf("Delete() error = %v, wantErr %v", err, tt.wantErr)
 			}
-
 			if _, err := chatDB.Get(string(tt.args.key)); err != v3Badger.ErrKeyNotFound {
 				t.Errorf("Delete() function didnt delete data by key %v", tt.args.key)
 			}
