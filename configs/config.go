@@ -14,11 +14,10 @@ import (
 type Config struct {
 	Main `mapstructure:",squash"`
 
-	Pastel *pastel.Config `mapstructure:"pastel" json:"pastel,omitempty"`
-
-	Nats *nats.Config    `mapstructure:"nats" json:"nats,omitempty"`
-	Rest *api.Config     `mapstructure:"api" json:"api,omitempty"`
-	Dao  *storage.Config `mapstructure:"api" json:"dao,omitempty"`
+	Pastel  *pastel.Config  `mapstructure:"pastel" json:"pastel,omitempty"`
+	Storage *storage.Config `mapstructure:"storage" json:"storage,omitempty"`
+	Nats    *nats.Config    `mapstructure:"nats" json:"nats,omitempty"`
+	Rest    *api.Config     `mapstructure:"api" json:"api,omitempty"`
 }
 
 func (config *Config) String() string {
@@ -33,8 +32,9 @@ func New() *Config {
 	return &Config{
 		Main: *NewMain(),
 
-		Pastel: pastel.NewConfig(),
-		Nats:   nats.NewConfig(),
-		Rest:   api.NewConfig(),
+		Pastel:  pastel.NewConfig(),
+		Nats:    nats.NewConfig(),
+		Rest:    api.NewConfig(),
+		Storage: storage.NewConfig(),
 	}
 }
