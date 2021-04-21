@@ -8,3 +8,6 @@ pastel:
 api:
   hostname: "localhost"
   port: 8080
+
+badger:
+  chat-db: "~/.pastel/badger"

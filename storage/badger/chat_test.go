@@ -22,16 +22,16 @@ func tearDown(err error) {
 }
 
 func TestMain(m *testing.M) {
-	tmpDir, err := ioutil.TempDir("", "chat")
+	tmpDir, err := ioutil.TempDir("", "badger")
 	if err != nil {
 		tearDown(err)
 	}
 	fmt.Println("Created temporary directory", tmpDir)
-	cfg := storage.NewConfig()
+	cfg := NewConfig()
 	cfg.ChatDBDir = tmpDir
 	chatDB = NewChatDB(cfg)
 	if chatDB == nil {
-		tearDown(fmt.Errorf("can not start chatdb"))
+		tearDown(fmt.Errorf("can not start badger"))
 	}
 	code := m.Run()
 	fmt.Println("Deleting", tmpDir)

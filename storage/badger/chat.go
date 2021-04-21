@@ -17,7 +17,7 @@ type ChatDB struct {
 }
 
 // NewChatDB creates an instance of ChatDB and starts fetching data
-func NewChatDB(cfg *storage.Config) storage.KeyValue {
+func NewChatDB(cfg *Config) storage.KeyValue {
 	ch := &ChatDB{db: &v3Badger.DB{}}
 	if err := ch.start(cfg); err != nil {
 		log.WithField("dir", cfg.ChatDBDir).Debugln(chatLogPrefix, "start")
@@ -31,8 +31,8 @@ func (db *ChatDB) Init() error {
 }
 
 // Init method opens the v3Badger db instance using specified configuration data and logger instance
-func (db *ChatDB) start(cfg *storage.Config) (err error) {
-	db.db, err = v3Badger.Open(v3Badger.DefaultOptions(cfg.ChatDBDir).WithLogger(log.NewLogger()))
+func (db *ChatDB) start(cfg *Config) (err error) {
+	db.db, err = v3Badger.Open(v3Badger.DefaultOptions(cfg.ChatDBDir).WithLogger(log.DefaultLogger))
 	if err != nil {
 		return errors.Errorf("can't fetch database from %v | %v", cfg.ChatDBDir, err)
 	}
