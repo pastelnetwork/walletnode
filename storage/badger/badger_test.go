@@ -7,7 +7,6 @@ import (
 	"reflect"
 	"testing"
 
-	v3Badger "github.com/dgraph-io/badger/v3"
 	"github.com/pastelnetwork/go-commons/errors"
 	"github.com/pastelnetwork/walletnode/storage"
 )
@@ -28,8 +27,8 @@ func TestMain(m *testing.M) {
 	}
 	fmt.Println("Created temporary directory", tmpDir)
 	cfg := NewConfig()
-	cfg.ChatDBDir = tmpDir
-	chatDB = NewChatDB(cfg)
+	cfg.Dir = tmpDir
+	chatDB = NewDB(cfg)
 	if chatDB == nil {
 		tearDown(fmt.Errorf("can not start badger"))
 	}
@@ -173,7 +172,7 @@ func TestChatDBDelete(t *testing.T) {
 			if err := chatDB.Delete(string(tt.args.key)); (err != nil) != tt.wantErr {
 				t.Errorf("Delete() error = %v, wantErr %v", err, tt.wantErr)
 			}
-			if _, err := chatDB.Get(string(tt.args.key)); err != v3Badger.ErrKeyNotFound {
+			if val, err := chatDB.Get(string(tt.args.key)); len(val) > 0 || err == nil {
 				t.Errorf("Delete() function didnt delete data by key %v", tt.args.key)
 			}
 		})

@@ -10,4 +10,4 @@ api:
   port: 8080
 
 badger:
-  chat-db: "~/.pastel/badger"
+  db-dir: "~/.pastel/badger"
