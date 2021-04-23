@@ -27,8 +27,8 @@ func TestMain(m *testing.M) {
 	}
 	fmt.Println("Created temporary directory", tmpDir)
 	cfg := NewConfig()
-	cfg.Dir = tmpDir
-	chatDB = NewDB(cfg)
+	cfg.dir = tmpDir
+	chatDB = NewBadgerDB(cfg)
 	if chatDB == nil {
 		tearDown(fmt.Errorf("can not start badger"))
 	}
@@ -49,7 +49,7 @@ func TestChatDBSet(t *testing.T) {
 		wantErr bool
 	}{
 		{
-			name: "Storing a new value into DB [hello-world]: OK",
+			name: "Storing a new value into badgerDB [hello-world]: OK",
 			args: args{
 				key:   []byte("hello"),
 				value: []byte("world"),
@@ -57,7 +57,7 @@ func TestChatDBSet(t *testing.T) {
 			wantErr: false,
 		},
 		{
-			name: "Storing a new value into DB [abc-def]: OK",
+			name: "Storing a new value into badgerDB [abc-def]: OK",
 			args: args{
 				key:   []byte("abc"),
 				value: []byte("def"),
@@ -65,7 +65,7 @@ func TestChatDBSet(t *testing.T) {
 			wantErr: false,
 		},
 		{
-			name: "Storing a new value into DB [___-&^%]: OK",
+			name: "Storing a new value into badgerDB [___-&^%]: OK",
 			args: args{
 				key:   []byte("___"),
 				value: []byte("&^%"),
@@ -73,7 +73,7 @@ func TestChatDBSet(t *testing.T) {
 			wantErr: false,
 		},
 		{
-			name: "Storing a new value into DB [-]: Error",
+			name: "Storing a new value into badgerDB [-]: Error",
 			args: args{
 				key:   []byte(""),
 				value: []byte(""),
