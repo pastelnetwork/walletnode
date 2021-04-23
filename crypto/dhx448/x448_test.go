@@ -8,15 +8,17 @@ import (
 )
 
 func TestX448DH(t *testing.T) {
-	x448KeyA := New()
-	x448KeyB := New()
+	x448KeyA, err := New()
+	assert.Nil(t, err)
+	x448KeyB, err := New()
+	assert.Nil(t, err)
 	pubKeyA := x448KeyA.PubKey()
 	pubKeyB := x448KeyB.PubKey()
 	// check the length of the generated public keys
 	assert.Equal(t, len(pubKeyA), x448.Size)
 	assert.Equal(t, len(pubKeyB), x448.Size)
 
-	err := x448KeyA.Shared(x448KeyB.PubKey())
+	err = x448KeyA.Shared(x448KeyB.PubKey())
 	assert.Nil(t, err)
 
 	err = x448KeyB.Shared(x448KeyA.PubKey())

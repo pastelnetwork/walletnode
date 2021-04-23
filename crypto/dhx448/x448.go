@@ -19,14 +19,16 @@ type DHX448 struct {
 }
 
 // New function returns DHX448 with already generated key pair
-func New() crypto.DHKey {
+func New() (crypto.DHKey, error) {
 	var pub, prv x448.Key
-	_, _ = io.ReadFull(rand.Reader, prv[:])
+	if _, err := io.ReadFull(rand.Reader, prv[:]); err != nil {
+		return nil, errors.Errorf("couldn't generate x448 key pair | %v", err)
+	}
 	x448.KeyGen(&pub, &prv)
 	return &DHX448{
 		pub: pub,
 		prv: prv,
-	}
+	}, nil
 }
 
 // PubKey method returns x448 public key
@@ -35,11 +37,11 @@ func (dhx448 *DHX448) PubKey() []byte {
 }
 
 // Shared method generates a shared x448 key based on own private
-// and shared public key
+// and received public key
 func (dhx448 *DHX448) Shared(key []byte) error {
 	pubKey, err := fromBytes(key)
 	if err != nil {
-		return errors.Errorf("can't make shared key | %v", err)
+		return errors.Errorf("couldn't make shared key | %v", err)
 	}
 	x448.Shared(&dhx448.shared, &(dhx448.prv), &pubKey)
 	return nil
@@ -53,13 +55,13 @@ func (dhx448 *DHX448) Encrypt(plainText []byte) ([]byte, error) {
 
 	block, err := aes.NewCipher(hash)
 	if err != nil {
-		return nil, errors.Errorf("error caused when trying to encrypt message | %v", err)
+		return nil, errors.Errorf("couldn't encrypt message | %v", err)
 	}
 
 	cipherText := make([]byte, aes.BlockSize+len(plainText))
 	iv := cipherText[:aes.BlockSize]
 	if _, err = io.ReadFull(rand.Reader, iv); err != nil {
-		return nil, errors.Errorf("error caused when trying to encrypt message | %v", err)
+		return nil, errors.Errorf("couldn't encrypt message | %v", err)
 	}
 
 	stream := cipher.NewCFBEncrypter(block, iv)
@@ -77,16 +79,16 @@ func (dhx448 *DHX448) Decrypt(secureMsg []byte) ([]byte, error) {
 
 	cipherText, err := base64.URLEncoding.DecodeString(string(secureMsg))
 	if err != nil {
-		return nil, errors.Errorf("error caused when trying to decrypt message | %v", err)
+		return nil, errors.Errorf("couldn't decrypt message | %v", err)
 	}
 
 	block, err := aes.NewCipher(hash)
 	if err != nil {
-		return nil, errors.Errorf("error caused when trying to decrypt message | %v", err)
+		return nil, errors.Errorf("couldn't decrypt message | %v", err)
 	}
 
 	if len(cipherText) < aes.BlockSize {
-		return nil, errors.Errorf("ciphertext block size is too short!")
+		return nil, errors.Errorf("couldn't decrypt message | ciphertext block size is too short!")
 	}
 
 	//IV needs to be unique, but doesn't have to be secure.
@@ -103,7 +105,7 @@ func (dhx448 *DHX448) Decrypt(secureMsg []byte) ([]byte, error) {
 // fromBytes function converts slice of bytes into x448.Key
 func fromBytes(key []byte) (x448.Key, error) {
 	if len(key) != x448.Size {
-		return x448.Key{}, errors.Errorf("invalid x448 key")
+		return x448.Key{}, errors.Errorf("couldn't convert key | invalid x448 key size")
 	}
 	var x448Key = x448.Key{}
 	copy(x448Key[:], key)
