@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 
 	"github.com/pastelnetwork/walletnode/api"
+	"github.com/pastelnetwork/walletnode/storage/badger"
+
 	"github.com/pastelnetwork/walletnode/clients/nats"
 	"github.com/pastelnetwork/walletnode/clients/pastel"
 )
@@ -13,6 +15,7 @@ type Config struct {
 	Main `mapstructure:",squash"`
 
 	Pastel *pastel.Config `mapstructure:"pastel" json:"pastel,omitempty"`
+	Badger *badger.Config `mapstructure:"badger" json:"badger,omitempty"`
 	Nats   *nats.Config   `mapstructure:"nats" json:"nats,omitempty"`
 	Rest   *api.Config    `mapstructure:"api" json:"api,omitempty"`
 }
@@ -32,5 +35,6 @@ func New() *Config {
 		Pastel: pastel.NewConfig(),
 		Nats:   nats.NewConfig(),
 		Rest:   api.NewConfig(),
+		Badger: badger.NewConfig(),
 	}
 }
