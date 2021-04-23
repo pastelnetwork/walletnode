@@ -30,10 +30,10 @@ func TestMain(m *testing.M) {
 	cfg.Dir = tmpDir
 	chatDB = NewBadgerDB(cfg)
 	if chatDB == nil {
-		tearDown(fmt.Errorf("can not start badger"))
+		tearDown(fmt.Errorf("couldn't start badger"))
 	}
 	if err := chatDB.Init(); err != nil {
-		tearDown(fmt.Errorf("can not find badger files"))
+		tearDown(fmt.Errorf("couldn't find badger files"))
 	}
 	code := m.Run()
 	fmt.Println("Deleting", tmpDir)
@@ -176,7 +176,7 @@ func TestChatDBDelete(t *testing.T) {
 				t.Errorf("Delete() error = %v, wantErr %v", err, tt.wantErr)
 			}
 			if val, err := chatDB.Get(string(tt.args.key)); len(val) > 0 || err == nil {
-				t.Errorf("Delete() function didnt delete data by key %v", tt.args.key)
+				t.Errorf("Delete() function didn't delete data by key %v", tt.args.key)
 			}
 		})
 	}

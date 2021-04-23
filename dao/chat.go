@@ -24,21 +24,21 @@ func NewChatDB(cfg *badger.Config) storage.KeyValue {
 
 // Init initializes the database.
 func (chatDB *ChatDB) Init() error {
-	return chatDB.Init()
+	return chatDB.db.Init()
 }
 
 // Get looks for key and returns corresponding Item.
 // If key is not found, ErrKeyNotFound is returned.
 func (chatDB *ChatDB) Get(key string) (value []byte, err error) {
-	return chatDB.Get(chatDB.prefix + key)
+	return chatDB.db.Get(chatDB.prefix + key)
 }
 
 // Set adds a key-value pair to the database.
 func (chatDB *ChatDB) Set(key string, value []byte) (err error) {
-	return chatDB.Set(chatDB.prefix+key, value)
+	return chatDB.db.Set(chatDB.prefix+key, value)
 }
 
 // Delete deletes a key.
 func (chatDB *ChatDB) Delete(key string) error {
-	return chatDB.Delete(chatDB.prefix + key)
+	return chatDB.db.Delete(chatDB.prefix + key)
 }
