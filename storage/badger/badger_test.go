@@ -27,10 +27,13 @@ func TestMain(m *testing.M) {
 	}
 	fmt.Println("Created temporary directory", tmpDir)
 	cfg := NewConfig()
-	cfg.dir = tmpDir
+	cfg.Dir = tmpDir
 	chatDB = NewBadgerDB(cfg)
 	if chatDB == nil {
 		tearDown(fmt.Errorf("can not start badger"))
+	}
+	if err := chatDB.Init(); err != nil {
+		tearDown(fmt.Errorf("can not find badger files"))
 	}
 	code := m.Run()
 	fmt.Println("Deleting", tmpDir)
