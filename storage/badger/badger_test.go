@@ -7,7 +7,6 @@ import (
 	"reflect"
 	"testing"
 
-	v3Badger "github.com/dgraph-io/badger/v3"
 	"github.com/pastelnetwork/go-commons/errors"
 	"github.com/pastelnetwork/walletnode/storage"
 )
@@ -28,10 +27,13 @@ func TestMain(m *testing.M) {
 	}
 	fmt.Println("Created temporary directory", tmpDir)
 	cfg := NewConfig()
-	cfg.ChatDBDir = tmpDir
-	chatDB = NewChatDB(cfg)
+	cfg.Dir = tmpDir
+	chatDB = NewBadgerDB(cfg)
 	if chatDB == nil {
-		tearDown(fmt.Errorf("can not start badger"))
+		tearDown(fmt.Errorf("couldn't start badger"))
+	}
+	if err := chatDB.Init(); err != nil {
+		tearDown(fmt.Errorf("couldn't find badger files"))
 	}
 	code := m.Run()
 	fmt.Println("Deleting", tmpDir)
@@ -50,7 +52,7 @@ func TestChatDBSet(t *testing.T) {
 		wantErr bool
 	}{
 		{
-			name: "Storing a new value into DB [hello-world]: OK",
+			name: "Storing a new value into badgerDB [hello-world]: OK",
 			args: args{
 				key:   []byte("hello"),
 				value: []byte("world"),
@@ -58,7 +60,7 @@ func TestChatDBSet(t *testing.T) {
 			wantErr: false,
 		},
 		{
-			name: "Storing a new value into DB [abc-def]: OK",
+			name: "Storing a new value into badgerDB [abc-def]: OK",
 			args: args{
 				key:   []byte("abc"),
 				value: []byte("def"),
@@ -66,7 +68,7 @@ func TestChatDBSet(t *testing.T) {
 			wantErr: false,
 		},
 		{
-			name: "Storing a new value into DB [___-&^%]: OK",
+			name: "Storing a new value into badgerDB [___-&^%]: OK",
 			args: args{
 				key:   []byte("___"),
 				value: []byte("&^%"),
@@ -74,7 +76,7 @@ func TestChatDBSet(t *testing.T) {
 			wantErr: false,
 		},
 		{
-			name: "Storing a new value into DB [-]: Error",
+			name: "Storing a new value into badgerDB [-]: Error",
 			args: args{
 				key:   []byte(""),
 				value: []byte(""),
@@ -173,8 +175,8 @@ func TestChatDBDelete(t *testing.T) {
 			if err := chatDB.Delete(string(tt.args.key)); (err != nil) != tt.wantErr {
 				t.Errorf("Delete() error = %v, wantErr %v", err, tt.wantErr)
 			}
-			if _, err := chatDB.Get(string(tt.args.key)); err != v3Badger.ErrKeyNotFound {
-				t.Errorf("Delete() function didnt delete data by key %v", tt.args.key)
+			if val, err := chatDB.Get(string(tt.args.key)); len(val) > 0 || err == nil {
+				t.Errorf("Delete() function didn't delete data by key %v", tt.args.key)
 			}
 		})
 	}
